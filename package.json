@@ -1,0 +1,23 @@
+{
+  "name": "battleships",
+  "version": "1.0.0",
+  "description": "Battleship Game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oroshi-tom/battleships.git"
+  },
+  "author": "Thomas Llewellyn",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oroshi-tom/battleships/issues"
+  },
+  "homepage": "https://github.com/oroshi-tom/battleships#readme",
+  "devDependencies": {
+    "firebase-cli": "^1.2.0",
+    "firebase-tools": "^9.0.1"
+  }
+}
