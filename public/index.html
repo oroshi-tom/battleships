@@ -11,19 +11,29 @@
     <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-firestore.js"></script>
     <!-- initialize the SDK after all desired features are loaded -->
     <script defer src="./init-firebase.js"></script>
-    <script src="./app.js"></script>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./main.css" />
   </head>
   <body>
     <h1>welcome to battleships!</h1>
-    <div class="player">Player 1: <span class="playerId"></span></div>
+    <h2 class="player">Current Player: <span class="playerId"></span></h2>
     <div class="container">
-      <div class="shipyard"></div>
+      <div class="shipyard">
+        <div
+          id="small"
+          class="ship"
+          ondragstart="event.dataTransfer.setData('text/plain',null)"
+        ></div>
+        <div id="cruiser" class="ship cruiser"></div>
+        <button class="cruiser-btn">Rotate Cruiser</button>
+        <div id="destroyer" class="ship destroyer"></div>
+        <button class="destroyer-btn">Rotate Destroyer</button>
+      </div>
       <div class="board">
         <div class="top-bar"></div>
         <div class="side-bar"></div>
         <div class="grid"></div>
       </div>
     </div>
+    <script src="./app.js"></script>
   </body>
 </html>
