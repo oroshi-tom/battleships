@@ -16,9 +16,24 @@
   <body>
     <h1>welcome to battleships!</h1>
     <h2 class="player">Current Player: <span class="playerId"></span></h2>
-
-    <div class="grid"></div>
-
+    <div class="container">
+      <div class="shipyard">
+        <div
+          id="small"
+          class="ship"
+          ondragstart="event.dataTransfer.setData('text/plain',null)"
+        ></div>
+        <div id="cruiser" class="ship cruiser"></div>
+        <button class="cruiser-btn">Rotate Cruiser</button>
+        <div id="destroyer" class="ship destroyer"></div>
+        <button class="destroyer-btn">Rotate Destroyer</button>
+      </div>
+      <div class="board">
+        <div class="top-bar"></div>
+        <div class="side-bar"></div>
+        <div class="grid"></div>
+      </div>
+    </div>
     <script src="./app.js"></script>
   </body>
 </html>

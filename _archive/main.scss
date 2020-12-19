@@ -1,0 +1,133 @@
+$ship-color: #49516f;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: [shipyard] 300px [board] auto;
+}
+
+.shipyard {
+  grid-area: shipyard;
+  position: relative;
+  display: flex;
+  border: 5px solid gray;
+
+  .cruiser-btn {
+    position: absolute;
+    top: 125px;
+    left: 10px;
+    height: 50px;
+    width: 75px;
+  }
+
+  .destroyer-btn {
+    position: absolute;
+    bottom: 25px;
+    left: 10px;
+    height: 50px;
+    width: 75px;
+  }
+
+  .ship {
+    cursor: move;
+    position: absolute;
+
+    &#small {
+      top: 200px;
+      left: 10px;
+      height: 50px;
+      width: 50px;
+      background: $ship-color;
+    }
+    &.cruiser {
+      top: 10px;
+      left: 10px;
+      background: $ship-color;
+
+      &.vertical {
+        height: 100px;
+        width: 50px;
+      }
+
+      &.horizontal {
+        height: 50px;
+        width: 100px;
+      }
+    }
+
+    &.destroyer {
+      bottom: 100px;
+      left: 10px;
+      background: $ship-color;
+
+      &.vertical {
+        height: 200px;
+        width: 50px;
+      }
+      &.horizontal {
+        height: 50px;
+        width: 200px;
+      }
+    }
+  }
+}
+
+.board {
+  grid-area: board;
+  display: grid;
+  grid-template-rows: 50px 500px;
+  grid-template-columns: 50px 500px;
+  grid-template-areas:
+    "top-bar top-bar"
+    "side-bar grid";
+}
+
+.top-bar {
+  grid-area: top-bar;
+  display: flex;
+  flex-wrap: nowrap;
+  div {
+    width: 50px;
+    text-align: center;
+    font-weight: 300;
+    font-weight: 300;
+    font-size: 2rem;
+  }
+}
+
+.side-bar {
+  grid-area: side-bar;
+  display: flex;
+  flex-wrap: wrap;
+
+  div {
+    width: 50px;
+    text-align: center;
+    font-weight: 300;
+    font-weight: 300;
+    font-size: 2rem;
+  }
+}
+
+.grid {
+  grid-area: grid;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  width: 500px;
+
+  div {
+    height: 50px;
+    width: 50px;
+    border: 1px solid gray;
+  }
+}
