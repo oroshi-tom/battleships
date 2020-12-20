@@ -5,8 +5,27 @@ $ship-color: #49516f;
   margin: 0;
   padding: 0;
 }
+body {
+  display: grid;
+  grid-template-columns: 550px auto;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "header header" "container controls";
+}
+
+header {
+  text-align: center;
+  grid-area: header;
+  .player-Id {
+    font-size: 2rem;
+    color: green;
+    &.player-2 {
+      color: blue;
+    }
+  }
+}
 
 .container {
+  grid-area: container;
   display: grid;
   height: 550px;
   width: 550px;
@@ -48,6 +67,47 @@ $ship-color: #49516f;
       border: 1px solid gray;
       width: 50px;
       height: 50px;
+    }
+  }
+}
+
+.controls {
+  grid-area: controls;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  align-items: start;
+  justify-content: center;
+
+  button {
+    height: 50px;
+    padding: 5px;
+    color: white;
+    margin: 20px;
+
+    &.start-btn {
+      background: green;
+    }
+    &.end-btn {
+      background: red;
+    }
+    &.destroyer-btn {
+      background: blue;
+    }
+    &.cruiser-btn {
+      background: blue;
+    }
+
+    &:hover {
+      background: darken(green, 10);
+    }
+
+    &:active {
+      background: lighten(green, 20);
+    }
+
+    &.closed {
+      visibility: hidden;
     }
   }
 }
