@@ -1,10 +1,15 @@
 // Get Dom elements
 //#################
 const grid = document.querySelector(".grid");
+const cells = [];
 const topBar = document.querySelector(".top-bar");
 const sideBar = document.querySelector(".side-bar");
 const destroyerBtn = document.querySelector(".destroyer-btn");
 const cruiserBtn = document.querySelector(".cruiser-btn");
+const startBtn = document.querySelector(".start-btn");
+const endBtn = document.querySelector(".end-btn");
+const currtentPlayerDisplay = document.querySelector(".player-Id");
+
 //--------------------------------------------------------------------//
 
 // Declare Globals
@@ -13,11 +18,12 @@ const topBarLabels = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 const height = 10;
 const width = 10;
 
+//// Current Player - set to one
+var currentPlayer = 1;
+
 // Placeholders for ship co-ordinates
-const playerOneDestroyer = [];
-const playerOneCruiser = [];
-const playerTwoDestroyer = [];
-const playerTwoCruiser = [];
+const playerOneShips = [];
+const playerTwoShips = [];
 //--------------------------------------------------------------------//
 
 // Create Board
@@ -43,113 +49,54 @@ function createBoard() {
     cell.setAttribute("data-id", i);
     cell.className = "cell";
     grid.appendChild(cell);
+    cells.push(cell);
   }
 }
 
 createBoard();
 //--------------------------------------------------------------------//
+var turn = true;
 
-// Place ships on board
-//#####################
-let currentCellId;
-let nextCellId;
-// Maximum of two clicks for placing ships
-let clicksLeft = 2;
-//// Listen for button events, only allow one click
-destroyerBtn.addEventListener("click", placeDestroyer, { once: true });
-cruiserBtn.addEventListener("click", placeCruiser, { once: true });
-
-const cells = Array.from(document.querySelectorAll(".cell"));
-//// Add destoyer to grid
-function placeDestroyer() {
-  // Get clicked cell
-
-  cells.forEach((cell) => cell.addEventListener("click", placeFirstBlock));
-
-  // Place first block
-  function placeFirstBlock(e) {
-    e.preventDefault();
-    // Get id of cell clicked, as int
-    currentCellId = parseInt(e.target.dataset.id);
-    cells[currentCellId].style.background = "gray";
-    // Define valid cells
-    let validCells = [
-      // Cell directly above
-      currentCellId - 10,
-      // Cell directly below
-      currentCellId + 10,
-      // Cell after
-      currentCellId + 1,
-      // Cell before
-      currentCellId - 1,
-    ];
-
-    // highlight valid cells
-    validCells.forEach(
-      (cell) =>
-        (((cells[cell].style.background = "green"),
-        cells[cell]).style.opacity = 0.5)
-    );
-    // Stop listening for clicks on cells from addFirstBlock
-    cells.forEach((cell) => cell.removeEventListener("click", placeFirstBlock));
-
-    // Add listener to cells for adding second block
-    cells.forEach((cell) => cell.addEventListener("click", placeSecondBlock));
-
-    // Place the second block
-    function placeSecondBlock(e) {
+class Player {
+  constructor(id) {
+    this.id = id;
+  }
+  ships = [];
+  shots = [];
+  placeShips(player) {
+    let cellId;
+    grid.addEventListener("click", (e) => {
       e.preventDefault();
-
-      // Remove valid cell highlighting
-      validCells.forEach(
-        (cell) =>
-          (((cells[cell].style.background = ""), cells[cell]).style.opacity = 1)
-      );
-      // get id of second cell
-      nextCellId = parseInt(e.target.dataset.id);
-
-      // If second cell id is valid, then true
-      let validCell = validCells.includes(nextCellId);
-
-      if (validCell) {
-        // Color the cell gray
-        cells[nextCellId].style.background = "gray";
-
-        // Stop listening for clicks on cells from addSecondBlock
-        cells.forEach((cell) =>
-          cell.removeEventListener("click", placeSecondBlock)
-        );
-
-        let direction;
-        //// Get direction, and fill in the rest of the ship
-        switch (nextCellId) {
-          // Cell directly above
-          case currentCellId - 10:
-            // color the block @ current - 20
-            cells[currentCellId - 20].style.background = "gray";
-            break;
-          // color the block @ current + 20
-          case currentCellId + 10:
-            cells[currentCellId + 20].style.background = "gray";
-            break;
-          // color the block @ current + 20
-          case currentCellId + 1:
-            cells[currentCellId + 2].style.background = "gray";
-            break;
-          // color the block @ current - 2
-          case currentCellId - 1:
-            cells[currentCellId - 2].style.background = "gray";
-            break;
-        }
-      }
-    }
-
-    // ./placeSecondBlock
+      e.target.style.background = "gray";
+      cellId = parseInt(e.target.dataset.id);
+      this.ships.push(cellId);
+      console.log(`player: ${player.id} cell: ${cellId} ships: ${this.ships}`);
+    });
+  }
+  tskeShot(player) {
+    let cellId;
+    grid.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.target.style.background = "red";
+      this.shots.push(cellId);
+    });
   }
 }
 
-//// Add cruiser to grid
-function placeCruiser() {}
-// Add shots
+class Game {
+  constructor(player_1, player_2) {
+    this.player_1 = player_1;
+    this.player_2 = player_2;
+  }
+}
 
-// Add second player
+var player_1 = new Player(1);
+var player_2 = new Player(2);
+var game = new Game(player_1, player_2);
+
+if (turn) {
+  game.player_1.placeShips(player_1);
+} else {
+  game.player_2.placeShips(player_2);
+}
+turn = !turn;

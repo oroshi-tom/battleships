@@ -14,16 +14,22 @@
     <link rel="stylesheet" href="./main.css" />
   </head>
   <body>
-    <h1>WELCOME TO BATTLESHIPS!</h1>
-    <h2 class="player">CURRENT PLAYER: <span class="playerId"></span></h2>
-    <div class="controls">
-      <button class="destroyer-btn">Place Destroyer</button>
-      <button class="cruiser-btn">Place Cruiser</button>
-    </div>
+    <header>
+      <h1>WELCOME TO BATTLESHIPS!</h1>
+      <h2 class="player">CURRENT PLAYER: <span class="player-Id"></span></h2>
+    </header>
+
     <div class="container">
       <div class="top-bar"></div>
       <div class="side-bar"></div>
       <div class="grid"></div>
+    </div>
+    <div class="controls">
+      <div class="message"></div>
+      <button class="start-btn">Start Turn</button>
+      <button class="destroyer-btn closed">Place Destroyer</button>
+      <button class="cruiser-btn closed">Place Cruiser</button>
+      <button class="end-btn closed">End Turn</button>
     </div>
 
     <script src="./app.js"></script>
