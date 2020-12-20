@@ -5,6 +5,22 @@ $ship-color: #49516f;
   margin: 0;
   padding: 0;
 }
+body {
+  display: flex;
+  flex-direction: column;
+}
+.controls {
+  width: 550px;
+  display: flex;
+  justify-content: space-evenly;
+  margin: 5px;
+  padding: 5px;
+  background: #333;
+  button {
+    height: 50px;
+    padding: 5px;
+  }
+}
 
 .container {
   display: grid;
