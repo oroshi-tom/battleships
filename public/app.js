@@ -226,44 +226,29 @@ let message;
 let turn = true;
 let gameOver;
 
-while (readyCount < 2) {
-  //// Place ships first
-  game.player_1.placeShips();
-
-  // Increment ready count
-  readyCount++;
-
-  // If player one is ready
-  if (readyCount == 1) {
-    // Hide player 1 ships
-    game.player_1.ships.forEach((ship) => {
-      cells[ship].style.background = "";
-    });
-
-    // Player 2's turn
-    game.player_2.placeShips();
-
-    //if both players are ready
-  } else if (readyCount == 2) {
-    // Hide player 2 ships
-    game.player_2.ships.forEach((ship) => {
-      cells[ship].style.background = "";
-    });
-  }
-}
-
 // Start game turns
-function startTurns() {
-  // Check for winner
-  while (true) {
-    if (turn) {
-      game.player_1.takeShot();
-    } else {
-      game.player_2.takeShot();
-      break;
-    }
-    turn = !turn;
-  }
-}
+
+game.player_1.placeShips();
+
+game.player_1.ships.forEach((ship) => {
+  cells[ship].style.background = "";
+});
+
+// Player 2's turn
+game.player_2.placeShips();
+game.player_2.ships.forEach((ship) => {
+  cells[ship].style.background = "green";
+});
+
+// Check for winner
+// while (true) {
+//   if (turn) {
+//     game.player_1.takeShot();
+//   } else {
+//     game.player_2.takeShot();
+//     break;
+//   }
+//   turn = !turn;
+// }
 
 startTurns();
