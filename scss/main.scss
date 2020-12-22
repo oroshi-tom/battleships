@@ -1,121 +1,146 @@
-$ship-color: #49516f;
-
 * {
   box-sizing: border-box;
+}
+
+body {
   margin: 0;
-  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 header {
   text-align: center;
-  grid-area: header;
+}
+.container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "game-board message-board";
+  justify-items: center;
+  align-items: center;
+}
 
-  h1 {
-    font-size: 3rem;
+.game-board {
+  grid-area: game-board;
+  height: 550px;
+  width: 550px;
+  border: 1px solid black;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  grid-template-areas: "top-bar top-bar" "side-bar grid";
+  .top-bar {
+    grid-area: top-bar;
+    height: 50px;
+    display: flex;
+    flex-wrap: nowrap;
+    text-align: center;
+
+    div {
+      font-size: 2rem;
+      height: 50px;
+      width: 50px;
+    }
+  }
+  .side-bar {
+    grid-area: side-bar;
+    width: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    div {
+      font-size: 2rem;
+      height: 50px;
+      width: 50px;
+    }
+  }
+  .grid {
+    grid-area: grid;
+    height: 500px;
+    width: 500px;
+    display: flex;
+    flex-wrap: wrap;
+    &.pl-one {
+      .cell:hover {
+        background: green;
+      }
+    }
+    &.pl-two {
+      .cell:hover {
+        background: blue;
+      }
+    }
+    .cell {
+      border: 1px solid gray;
+      height: 50px;
+      width: 50px;
+
+      &.pl-one-ship {
+        background: gray;
+      }
+      &.pl-two-ship {
+        background: gray;
+      }
+      &.pl-one-shot {
+        background: red;
+      }
+      &.pl-two-shot {
+        background: red;
+      }
+
+      &.pl-one:hover {
+        background: blue;
+      }
+
+      &.pl-two:hover {
+        background: pink;
+      }
+    }
   }
 }
 
-.container {
-  padding: 2rem;
-  grid-area: container;
-  display: grid;
-  grid-template-columns: 60% 40%;
-  grid-template-areas: "board message";
+.message-board {
+  height: 100%;
+  width: 100%;
+  grid-area: message-board;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+  align-content: center;
+  justify-content: center;
+  position: relative;
+  background: lightgray;
 
-  .board {
-    grid-area: board;
-    display: grid;
-    height: 550px;
-    width: 550px;
-    justify-self: center;
-    grid-template-columns: 50px 1fr;
-    grid-template-rows: 50px 1fr;
-    grid-template-areas: "top-bar top-bar" "side-bar grid";
-
-    .top-bar {
-      grid-area: top-bar;
+  .message-text {
+    text-align: center;
+    font-size: 2.5rem;
+    margin: 0.5rem;
+    padding: 1rem 0.5rem;
+    display: none;
+    &.show {
       display: flex;
-      flex-wrap: nowrap;
-
-      div {
-        width: 50px;
-        text-align: center;
-        font-size: 2rem;
-      }
-    }
-
-    .side-bar {
-      grid-area: side-bar;
-
-      div {
-        width: 50px;
-        height: 50px;
-        text-align: center;
-        font-size: 2rem;
-      }
-    }
-
-    .grid {
-      grid-area: grid;
-      display: flex;
-      flex-wrap: wrap;
-      height: 500px;
-      width: 500px;
-
-      .cell {
-        border: 1px solid gray;
-        width: 50px;
-        height: 50px;
-
-        &.pl-one-ship {
-          background: green;
-        }
-        &.pl-two-ship {
-          background: blue;
-        }
-      }
     }
   }
-
-  .message-board {
-    grid-area: message;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: lightgray;
-
-    .message-text {
-      background-color: rgba(0, 0, 0, 0.9);
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 3rem;
-      padding: 0.25rem 0.5em;
-      margin: 1rem;
-      display: none;
-      &.show {
-        display: block;
-      }
-    }
-
-    button {
-      font-size: 3rem;
-      background: white;
-      border: 1px solid black;
-      padding: 0.25em 0.5em;
-      cursor: pointer;
-      display: none;
-      &.show {
-        display: flex;
-      }
-    }
-
-    button:hover {
+  button {
+    font-size: 3rem;
+    padding: 1rem 0.5rem;
+    background: white;
+    color: black;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 0.5rem;
+    display: none;
+    &:hover {
       background: black;
       color: white;
       border: 1px solid white;
+    }
+
+    &:active {
+      background: green;
+    }
+    &.show {
+      display: flex;
     }
   }
 }
