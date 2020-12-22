@@ -9,9 +9,12 @@ $ship-color: #49516f;
 header {
   text-align: center;
   grid-area: header;
-
-  h1 {
-    font-size: 3rem;
+  .player-Id {
+    font-size: 2rem;
+    color: green;
+    &.player-2 {
+      color: blue;
+    }
   }
 }
 
@@ -20,7 +23,7 @@ header {
   grid-area: container;
   display: grid;
   grid-template-columns: 60% 40%;
-  grid-template-areas: "board message";
+  grid-template-areas: "board controls";
 
   .board {
     grid-area: board;
@@ -62,60 +65,40 @@ header {
       height: 500px;
       width: 500px;
 
-      .cell {
+      div {
         border: 1px solid gray;
         width: 50px;
         height: 50px;
-
-        &.pl-one-ship {
-          background: green;
-        }
-        &.pl-two-ship {
-          background: blue;
-        }
       }
     }
   }
 
-  .message-board {
-    grid-area: message;
+  .controls {
+    grid-area: controls;
     position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: lightgray;
-
-    .message-text {
-      background-color: rgba(0, 0, 0, 0.9);
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 3rem;
-      padding: 0.25rem 0.5em;
-      margin: 1rem;
-      display: none;
-      &.show {
-        display: block;
-      }
+    .message {
+      margin: auto;
+      left: 0;
+      right: 0;
+      text-align: center;
+      position: absolute;
+      margin: 50px;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
     button {
-      font-size: 3rem;
-      background: white;
-      border: 1px solid black;
-      padding: 0.25em 0.5em;
-      cursor: pointer;
-      display: none;
-      &.show {
-        display: flex;
-      }
-    }
+      position: absolute;
+      margin: auto;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      padding: 0px 20px;
+      height: 30px;
 
-    button:hover {
-      background: black;
-      color: white;
-      border: 1px solid white;
+      &.hidden {
+        visibility: hidden;
+      }
     }
   }
 }
