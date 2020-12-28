@@ -1,119 +1,223 @@
+$grid-height: 300px;
+$grid-width: 300px;
+$cell-height: calc(#{$grid-height} * 0.1);
+$cell-width: calc(#{$grid-height} * 0.1);
+$text-lg: 3rem;
+$text-md: 2rem;
+$text-sm: 1rem;
+$pl-1-color: #10b981;
+$pl-2-color: #3b82f6;
+$ship-color: #6b7280;
+
 * {
+  content: "";
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
+  position: relative;
 }
 
-header {
-  text-align: center;
-}
 .container {
-  width: 100%;
+  margin: 1rem;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: "game-board message-board";
+  grid-auto-rows: minmax(min-content, max-content);
+  grid-auto-columns: minmax(min-content, max-content);
+  grid-template-areas: "game-header" "pl-1-board" "pl-2-board";
   justify-items: center;
   align-items: center;
+  justify-content: center;
+  .game-header {
+    grid-area: game-header;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .pl-1-board {
+    grid-area: pl-1-board;
+    border: 5px solid $pl-1-color;
+    background: rgba($pl-1-color, 0.1);
+
+    .message-area {
+      background: rgba(darken($pl-1-color, 1%), 0.2);
+    }
+
+    .pl-1 .cell:hover {
+      background: $pl-1-color;
+    }
+  }
+  .pl-2-board {
+    grid-area: pl-2-board;
+    border: 5px solid $pl-2-color;
+    background: rgba($pl-2-color, 0.1);
+
+    .message-area {
+      background: rgba(darken($pl-2-color, 1%), 0.2);
+    }
+
+    .pl-2 .cell:hover {
+      background: $pl-2-color;
+    }
+  }
 }
 
-.game-board {
-  grid-area: game-board;
-  height: 550px;
-  width: 550px;
-  border: 1px solid black;
+.board {
   display: grid;
-  grid-template-columns: auto auto;
-  grid-template-rows: auto auto;
-  grid-template-areas: "top-bar top-bar" "side-bar grid";
-  .top-bar {
-    grid-area: top-bar;
-    height: 50px;
-    display: flex;
-    flex-wrap: nowrap;
-    text-align: center;
+  grid-auto-rows: minmax(min-content, max-content);
+  grid-auto-columns: minmax(min-content, max-content);
+  grid-template-areas: "board-header board-header" "grid-container message-area";
+  justify-content: space-evenly;
+  padding: 1rem;
+  margin: 0.5rem;
+  border-radius: 15px;
 
-    div {
-      font-size: 2rem;
-      height: 50px;
-      width: 50px;
-    }
-  }
-  .side-bar {
-    grid-area: side-bar;
-    width: 50px;
-    display: flex;
-    flex-wrap: wrap;
+  -webkit-box-shadow: 2px 2px 15px -3px rgba(0, 0, 0, 0.66);
+  box-shadow: 2px 2px 15px -3px rgba(0, 0, 0, 0.66);
+
+  .board-header {
+    grid-area: board-header;
     text-align: center;
-    div {
-      font-size: 2rem;
-      height: 50px;
-      width: 50px;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .grid-container {
+    grid-area: grid-container;
+    display: grid;
+    grid-template-areas: "top-bar top-bar" "side-bar grid";
+    grid-auto-rows: minmax(min-content, max-content);
+    grid-auto-columns: minmax(min-content, max-content);
+
+    .top-bar {
+      grid-area: top-bar;
+      height: $cell-height;
+      display: flex;
+      flex-wrap: nowrap;
+      text-align: center;
+      .label {
+        font-size: $text-sm;
+        height: $cell-height;
+        width: $cell-width;
+        text-align: center;
+        margin: 0;
+      }
+    }
+    .side-bar {
+      grid-area: side-bar;
+      width: $cell-width;
+      display: flex;
+      flex-wrap: wrap;
+      text-align: center;
+      .label {
+        font-size: $text-sm;
+        height: $cell-height;
+        width: $cell-width;
+        text-align: center;
+      }
+    }
+
+    .grid {
+      grid-area: grid;
+      height: $grid-height;
+      width: $grid-width;
+      display: flex;
+      flex-wrap: wrap;
+      background: #fff;
+
+      .cell {
+        border: 1px solid gray;
+        height: $cell-height;
+        width: $cell-width;
+
+        &.pl-1-ship {
+          background: gray;
+        }
+        &.pl-1-ship {
+          background: gray;
+        }
+        &.pl-1-shot {
+          background: red;
+        }
+        &.pl-1-shot {
+          background: red;
+        }
+
+        &.pl-1:hover {
+          background: blue;
+        }
+
+        &.pl-1:hover {
+          background: pink;
+        }
+      }
     }
   }
-  .grid {
-    grid-area: grid;
-    height: 500px;
-    width: 500px;
+
+  .message-area {
+    grid-area: message-area;
+    width: calc(#{$grid-width} + #{$cell-width});
+    height: calc(#{$grid-height} + #{$cell-height});
+    position: relative;
     display: flex;
-    flex-wrap: wrap;
-    &.pl-one {
-      .cell:hover {
+    border-radius: 15px;
+    justify-content: center;
+    margin-left: 1rem;
+    -webkit-box-shadow: inset 5px 5px 15px -14px #000000;
+    box-shadow: inset 5px 5px 15px -14px #000000;
+
+    button {
+      font-size: $text-md;
+      padding: 1rem 0.5rem;
+      background: white;
+      color: black;
+      border: 1px solid black;
+      border-radius: 5px;
+      margin: 0.5rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      &:hover {
+        background: black;
+        color: white;
+        border: 1px solid white;
+      }
+
+      &:active {
         background: green;
       }
-    }
-    &.pl-two {
-      .cell:hover {
-        background: blue;
-      }
-    }
-    .cell {
-      border: 1px solid gray;
-      height: 50px;
-      width: 50px;
-
-      &.pl-one-ship {
-        background: gray;
-      }
-      &.pl-two-ship {
-        background: gray;
-      }
-      &.pl-one-shot {
-        background: red;
-      }
-      &.pl-two-shot {
-        background: red;
-      }
-
-      &.pl-one:hover {
-        background: blue;
-      }
-
-      &.pl-two:hover {
-        background: pink;
+      &.show {
+        display: flex;
       }
     }
   }
 }
 
-.message-board {
+.game-message {
+  grid-area: game-message;
   height: 100%;
-  width: 100%;
-  grid-area: message-board;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-items: center;
-  align-content: center;
-  justify-content: center;
-  position: relative;
-  background: lightgray;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: none;
 
   .message-text {
     text-align: center;
-    font-size: 2.5rem;
+    font-size: $text-md;
     margin: 0.5rem;
     padding: 1rem 0.5rem;
     display: none;
@@ -121,8 +225,8 @@ header {
       display: flex;
     }
   }
-  button {
-    font-size: 3rem;
+  .restart-btn {
+    font-size: $text-md;
     padding: 1rem 0.5rem;
     background: white;
     color: black;
