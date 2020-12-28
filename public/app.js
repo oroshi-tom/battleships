@@ -1,6 +1,6 @@
-const topBar = document.querySelector(".top-bar");
-const sideBar = document.querySelector(".side-bar");
-const grid = document.querySelector(".grid");
+const topBars = [...document.querySelectorAll(".top-bar")];
+const sideBars = [...document.querySelectorAll(".side-bar")];
+const grids = [...document.querySelectorAll(".grid")];
 const readyBtn = document.querySelector(".ready-btn");
 const startBtn = document.querySelector(".start-btn");
 const messageText = document.querySelector(".message-text");
@@ -14,8 +14,8 @@ class Player {
   shots = [];
 }
 
-const PLAYER_1 = new Player("one");
-const PLAYER_2 = new Player("two");
+const PLAYER_1 = new Player(1);
+const PLAYER_2 = new Player(2);
 const height = 10;
 const width = 10;
 const topBarLabels = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
@@ -23,27 +23,32 @@ const cells = [];
 // Build Grid
 function buildGameBoard() {
   // Populate top bar
-  for (let i = 0; i < width + 1; i++) {
-    const cell = document.createElement("div");
-    cell.setAttribute("class", "cell");
-    cell.setAttribute("data-id", i);
-    cell.textContent = topBarLabels[i];
-    topBar.appendChild(cell);
+  for (let a = 0; a < topBars.length; a++) {
+    for (let i = 0; i < width + 1; i++) {
+      const cell = document.createElement("div");
+      cell.setAttribute("class", "label");
+      cell.textContent = topBarLabels[i];
+      topBars[a].appendChild(cell);
+    }
   }
   // Populate side bar
-  for (let i = 1; i < height + 1; i++) {
-    const cell = document.createElement("div");
-    cell.setAttribute("class", "cell");
-    cell.textContent = i;
-    sideBar.appendChild(cell);
+  for (let a = 0; a < sideBars.length; a++) {
+    for (let i = 1; i < height + 1; i++) {
+      const cell = document.createElement("div");
+      cell.setAttribute("class", "label");
+      cell.textContent = i;
+      sideBars[a].appendChild(cell);
+    }
   }
   // Populate grid
-  for (let i = 0; i < width * height; i++) {
-    const cell = document.createElement("div");
-    cell.setAttribute("class", "cell");
-    cell.setAttribute("data-id", i);
-    grid.appendChild(cell);
-    cells.push(cell);
+  for (let a = 0; a < grids.length; a++) {
+    for (let i = 0; i < width * height; i++) {
+      const cell = document.createElement("div");
+      cell.setAttribute("class", "cell");
+      cell.setAttribute("data-id", i);
+      grids[a].appendChild(cell);
+      cells.push(cell);
+    }
   }
 }
 
