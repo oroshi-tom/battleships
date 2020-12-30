@@ -17,44 +17,42 @@
   <body>
     <div class="container">
       <header class="game-header">
-        <h1>WELCOME TO BATTLESHIPS!</h1>
+        <h1>BATTLESHIPS</h1>
       </header>
 
-      <div id="pl1Board" class="pl-1-board board">
+      <div id="pl1Board" class="pl-1-board board" data-pl="1">
         <div class="board-header">
           <h2>Player One</h2>
         </div>
         <div class="grid-container">
           <div class="top-bar"></div>
           <div class="side-bar"></div>
-          <div class="grid" data-pl-1-grid></div>
+          <div class="grid" data-pl="1"></div>
         </div>
         <div class="message-area">
-          <div class="message-text" data-pl-1-message></div>
-          <button class="ready-btn" data-pl-1-btn>Ready</button>
+          <div class="message-text" data-pl="1"></div>
+          <button class="ready-btn" data-pl="1">Ready</button>
         </div>
       </div>
 
-      <div id="pl2Board" class="pl-2-board board">
+      <div id="pl2Board" class="pl-2-board board" data-pl="2">
         <div class="board-header">
           <h2>Player Two</h2>
         </div>
         <div class="grid-container">
           <div class="top-bar"></div>
           <div class="side-bar"></div>
-          <div class="grid" data-pl-1-grid></div>
+          <div class="grid" data-pl="2"></div>
         </div>
         <div class="message-area">
-          <div class="message-text" data-pl-2-message></div>
-          <button class="ready-btn" data-pl-2-btn>Ready</button>
+          <div class="message-text" data-pl="2"></div>
+          <button class="ready-btn" data-pl="2">Ready</button>
         </div>
       </div>
     </div>
     <div id="gameMessage" class="game-message">
-      <div class="game-message-text" data-game-message-text>
-        Click 'Start' to begin
-      </div>
-      <button id="restartBtn" class="restart-btn">Reset</button>
+      <div class="game-message-text" data-game-message-text></div>
+      <button id="restartBtn" class="restart-btn">Restart</button>
     </div>
   </body>
 </html>
