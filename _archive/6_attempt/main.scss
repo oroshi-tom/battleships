@@ -1,0 +1,308 @@
+$grid-size: 300px;
+$cell-size: calc(#{$grid-size} * 0.1);
+$mark-size: calc(#{$cell-size} * 0.9);
+
+$text-lg: 3rem;
+$text-md: 2rem;
+$text-sm: 1rem;
+$pl-1-color: #10b981;
+$pl-2-color: #3b82f6;
+$ship-color: #6b7280;
+
+* {
+  content: "";
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  position: relative;
+}
+
+button {
+  cursor: pointer;
+}
+
+.container {
+  margin: 1rem;
+  display: grid;
+  grid-auto-rows: minmax(min-content, max-content);
+  grid-auto-columns: minmax(min-content, max-content);
+  grid-template-areas: "game-header" "pl-1-board" "pl-2-board";
+  justify-items: center;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  .game-header {
+    grid-area: game-header;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  // Player-Specific Styling
+  .pl-1-board {
+    grid-area: pl-1-board;
+    border: 5px solid $pl-1-color;
+    background: rgba($pl-1-color, 0.1);
+
+    &.active {
+      -webkit-box-shadow: 0px 0px 15px 10px #10b981;
+      box-shadow: 0px 0px 15px 10px #10b981;
+    }
+
+    .message-area {
+      background: rgba(darken($pl-1-color, 1%), 0.2);
+    }
+  }
+
+  .pl-2-board {
+    grid-area: pl-2-board;
+    border: 5px solid $pl-2-color;
+    background: rgba($pl-2-color, 0.1);
+
+    &.active {
+      -webkit-box-shadow: 0px 0px 15px 10px #3b82f6;
+      box-shadow: 0px 0px 15px 10px #3b82f6;
+    }
+
+    .message-area {
+      background: rgba(darken($pl-2-color, 1%), 0.2);
+    }
+  }
+}
+
+.board {
+  display: grid;
+  grid-auto-rows: minmax(min-content, max-content);
+  grid-auto-columns: minmax(min-content, max-content);
+  grid-template-areas: "board-header board-header" "grid-container message-area";
+  justify-content: space-evenly;
+  padding: 1rem;
+  margin: 0.5rem;
+  border-radius: 15px;
+
+  -webkit-box-shadow: 2px 2px 15px -3px rgba(0, 0, 0, 0.66);
+  box-shadow: 2px 2px 15px -3px rgba(0, 0, 0, 0.66);
+
+  .board-header {
+    grid-area: board-header;
+    text-align: center;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .grid-container {
+    grid-area: grid-container;
+    display: grid;
+    grid-template-areas: "top-bar top-bar" "side-bar grid";
+    grid-auto-rows: minmax(min-content, max-content);
+    grid-auto-columns: minmax(min-content, max-content);
+
+    .top-bar {
+      grid-area: top-bar;
+      height: $cell-size;
+      display: flex;
+      flex-wrap: nowrap;
+      text-align: center;
+      .label {
+        font-size: $text-sm;
+        height: $cell-size;
+        width: $cell-size;
+        text-align: center;
+        margin: 0;
+      }
+    }
+    .side-bar {
+      grid-area: side-bar;
+      width: $cell-size;
+      display: flex;
+      flex-wrap: wrap;
+      text-align: center;
+      .label {
+        font-size: $text-sm;
+        height: $cell-size;
+        width: $cell-size;
+        text-align: center;
+      }
+    }
+
+    .grid {
+      grid-area: grid;
+      height: $grid-size;
+      width: $grid-size;
+      display: flex;
+      flex-wrap: wrap;
+      background: #fff;
+
+      .cell {
+        border: 1px solid gray;
+        height: $cell-size;
+        width: $cell-size;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+
+        &.pl-1-cell:hover {
+          background: $pl-1-color;
+        }
+
+        &.pl-2-cell:hover {
+          background: $pl-2-color;
+        }
+
+        &.ship {
+          background: gray;
+        }
+
+        &.hit::before,
+        &.hit::after,
+        &.miss::before,
+        &.miss::after {
+          content: "";
+          position: absolute;
+        }
+
+        &.hit::before,
+        &.hit::after {
+          height: $mark-size;
+          width: calc(#{$mark-size} * 0.15);
+        }
+
+        &.hit::before,
+        &.hit::after {
+          background: red;
+        }
+
+        &.hit::before {
+          transform: rotate(45deg);
+        }
+
+        &.hit::after {
+          transform: rotate(-45deg);
+        }
+
+        &.miss::before,
+        &.miss::after {
+          border-radius: 50%;
+        }
+
+        &.miss::before {
+          height: $mark-size;
+          width: $mark-size;
+          background: #000;
+        }
+        &.miss::after {
+          height: calc(#{$mark-size} * 0.75);
+          width: calc(#{$mark-size} * 0.75);
+          background: #fff;
+        }
+      }
+    }
+  }
+
+  .message-area {
+    grid-area: message-area;
+    width: calc(#{$grid-size} + #{$cell-size});
+    height: calc(#{$grid-size} + #{$cell-size});
+    padding: 1rem;
+    text-align: center;
+    font-size: $text-sm;
+    position: relative;
+    display: flex;
+    border-radius: 15px;
+    justify-content: center;
+    margin-left: 1rem;
+    -webkit-box-shadow: inset 5px 5px 15px -14px #000000;
+    box-shadow: inset 5px 5px 15px -14px #000000;
+
+    .message-text {
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      padding: 0.5rem;
+    }
+
+    button {
+      font-size: $text-md;
+      padding: 1rem 0.5rem;
+      background: white;
+      color: black;
+      border: 1px solid black;
+      border-radius: 5px;
+      margin: 0.5rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      &:hover {
+        background: black;
+        color: white;
+        border: 1px solid white;
+      }
+
+      &:active {
+        background: green;
+      }
+      &.show {
+        display: flex;
+      }
+    }
+  }
+}
+
+.game-message {
+  background: rgba(0, 0, 0, 0.9);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  &.show {
+    display: flex;
+  }
+
+  .game-message-text {
+    text-align: center;
+    font-size: $text-md;
+    margin: 0.5rem;
+    padding: 1rem 0.5rem;
+    color: #fff;
+    &.show {
+      display: flex;
+    }
+  }
+  .restart-btn {
+    font-size: $text-md;
+    padding: 1rem 0.5rem;
+    background: white;
+    color: black;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 0.5rem;
+
+    &:hover {
+      background: black;
+      color: white;
+      border: 1px solid white;
+    }
+    &:active {
+      background: green;
+    }
+    &.show {
+      display: flex;
+    }
+  }
+}
