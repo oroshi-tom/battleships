@@ -1,26 +1,18 @@
-// Player-agnostic elements
+// DOM elements
 const topBars = [...document.querySelectorAll(".top-bar")];
 const sideBars = [...document.querySelectorAll(".side-bar")];
 const grids = [...document.querySelectorAll(".grid")];
-
-// Player-specific elements
-const pl1Board = document.querySelector('.board[data-pl="1"]');
-const pl2Board = document.querySelector('.board[data-pl="2"]');
-const pl1Grid = document.querySelector('.grid[data-pl="1"]');
-const pl2Grid = document.querySelector('.grid[data-pl="2"]');
-const pl1Message = document.querySelector('.message-text[data-pl="1"]');
-const pl2Message = document.querySelector('.message-text[data-pl="2"]');
-const pl1ReadyBtn = document.querySelector('.ready-btn[data-pl="1"]');
-const pl2ReadyBtn = document.querySelector('.ready-btn[data-pl="2"]');
-
-//const messageText = [...document.querySelectorAll(".message-text")];
-
 const gameMessage = document.querySelector("#gameMessage");
 const restartBtn = document.querySelector("#restartBtn");
 
 class Player {
-  constructor(id) {
+  constructor(id, board, grid, cells, message, readyBtn) {
     this.id = id;
+    this.board = board;
+    this.grid = grid;
+    this.cells = cells;
+    this.message = message;
+    this.readyBtn = readyBtn;
   }
   ready = false;
   hits = [];
@@ -28,14 +20,13 @@ class Player {
   shots = [];
 }
 
-const PLAYER_1 = new Player(1);
-const PLAYER_2 = new Player(2);
+// Game constants
 const height = 10;
 const width = 10;
 const topBarLabels = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 const cells = [];
 
-// Build Player Boards
+// Build Game Boards
 function buildGameBoard() {
   // Populate top bar
   for (let a = 0; a < topBars.length; a++) {
@@ -61,6 +52,11 @@ function buildGameBoard() {
       const cell = document.createElement("div");
       cell.setAttribute("class", "cell");
       cell.setAttribute("data-id", i);
+      if (a == 0) {
+        cell.setAttribute("data-pl", "1");
+      } else {
+        cell.setAttribute("data-pl", "2");
+      }
       grids[a].appendChild(cell);
       cells.push(cell);
     }
@@ -69,124 +65,151 @@ function buildGameBoard() {
 
 // Build the Game Board
 buildGameBoard();
+
+// Player-specific elements
+const pl1Board = document.querySelector('.board[data-pl="1"]');
+const pl2Board = document.querySelector('.board[data-pl="2"]');
+const pl1Grid = document.querySelector('.grid[data-pl="1"]');
+const pl2Grid = document.querySelector('.grid[data-pl="2"]');
+const pl1Cells = Array.from(document.querySelectorAll('.cell[data-pl="1"]'));
+const pl2Cells = Array.from(document.querySelectorAll('.cell[data-pl="2"]'));
+const pl1Message = document.querySelector('.message-text[data-pl="1"]');
+const pl2Message = document.querySelector('.message-text[data-pl="2"]');
+const pl1ReadyBtn = document.querySelector('.ready-btn[data-pl="1"]');
+const pl2ReadyBtn = document.querySelector('.ready-btn[data-pl="2"]');
+
+// Instantiate players
+const PLAYER_1 = new Player(
+  1,
+  pl1Board,
+  pl1Grid,
+  pl1Cells,
+  pl1Message,
+  pl1ReadyBtn
+);
+const PLAYER_2 = new Player(
+  2,
+  pl2Board,
+  pl2Grid,
+  pl2Cells,
+  pl2Message,
+  pl2ReadyBtn
+);
+
 let turn;
 gameMessage.classList.add("show");
 restartBtn.addEventListener("click", startGame, { once: true });
 
 // Start game
 function startGame() {
+  console.log("startGame");
   turn = true;
   gameMessage.classList.remove("show");
-  [currentPlayer, inactivePlayer] = getCurrentPlayer(turn);
-  displayReadyMessage();
-  setPlayerBoard();
-  placeShipsTurn();
+  cells.forEach((cell) => {
+    cell.classList.remove("ship");
+    cell.classList.remove("shot");
+    cell.classList.remove("hit");
+  });
+  placeShips();
 }
 
 // Get the current player
 function getCurrentPlayer(turn) {
+  console.log("getCurrentPlayer");
   currentPlayer = turn ? PLAYER_1 : PLAYER_2;
   inactivePlayer = turn ? PLAYER_2 : PLAYER_1;
   return [currentPlayer, inactivePlayer];
 }
 
-// Display ready message
-function displayReadyMessage() {
-  message = `Player ${currentPlayer.id}, Click on the grid to place your ship. click 'Ready' when done`;
-  if (currentPlayer.id == 1) {
-    pl1Message.textContent = message;
-    pl2Message.textContent = "";
+function placeShips() {
+  console.log("placeShips");
+  const [currentPlayer, inactivePlayer] = getCurrentPlayer(turn);
+  setCurrentBoard(currentPlayer, inactivePlayer);
+  displayReadyMessage(currentPlayer, inactivePlayer);
+  if ((PLAYER_1.ready == true) & (PLAYER_2.ready == true)) {
+    startTurns();
   } else {
-    pl2Message.textContent = message;
-    pl1Message.textContent = "";
+    currentPlayer.grid.addEventListener("click", placeShipMark);
   }
 }
 
-// Turns to place player ships
-function placeShipsTurn() {
-  console.log(`current player: ${currentPlayer.id}`);
-  if (currentPlayer.id == 1) {
-    pl2Grid.removeEventListener("click", placeShipMark);
-    pl1Grid.addEventListener("click", placeShipMark);
-    pl1ReadyBtn.addEventListener("click", playerReady, { once: true });
-  } else {
-    pl1Grid.removeEventListener("click", placeShipMark);
-    pl2Grid.addEventListener("click", placeShipMark);
-    pl2ReadyBtn.addEventListener("click", playerReady, { once: true });
-  }
-
-  // if (PLAYER_1.ready && PLAYER_2.ready) {
-  //   grids.forEach((grid) => {
-  //     grid.removeEventListener("click", placeShipMark);
-  //   });
-  //   pl1ReadyBtn.classList.toggle("show");
-  //   pl2ReadyBtn.classList.toggle("show");
-  //   startTurns();
-  // }
+// Display ready message
+function displayReadyMessage(currentPlayer, inactivePlayer) {
+  console.log("displayReadyMessage");
+  const messageText = `Player ${currentPlayer.id}, Click on the grid to place your ship. click 'Ready' when done`;
+  currentPlayer.message.textContent = messageText;
+  inactivePlayer.message.textContent = "";
 }
 
 // Place individual marks for the ships
 function placeShipMark(e) {
-  cell = e.target;
+  console.log(`placeShipMark ${currentPlayer.id}`);
+  const cell = e.target;
   cell.classList.add("ship");
   currentPlayer.ships.push(cell.dataset.id);
+  currentPlayer.readyBtn.addEventListener("click", playerReady, { once: true });
 }
 
-// Set Player ready to True, and switch current player
 function playerReady() {
+  console.log("playerReady");
   currentPlayer.ready = true;
+  currentPlayer.grid.removeEventListener("click", placeShipMark);
   swapTurns();
-  [currentPlayer, inactivePlayer] = getCurrentPlayer(turn);
-  setPlayerBoard();
-  displayReadyMessage();
+  setCurrentBoard(currentPlayer, inactivePlayer);
+  placeShips();
 }
 
 function swapTurns() {
+  console.log("swapTurns");
   turn = !turn;
 }
 // Set the grid hover color for current player
-function setPlayerBoard() {
-  // Highlight current player board
-  if (currentPlayer.id == 1) {
-    pl1Board.classList.add("active");
-    pl2Board.classList.remove("active");
-  } else {
-    pl2Board.classList.add("active");
-    pl1Board.classList.remove("active");
-  }
-
-  // hide other players ships, shots, and hits
-  cells.forEach((cell) => {
-    inactivePlayer.ships.forEach((ship) => {
+function setCurrentBoard(currentPlayer, inactivePlayer) {
+  console.log("setPlayerBoard");
+  // Display Current Player Items
+  currentPlayer.board.classList.add("active");
+  currentPlayer.cells.forEach((cell) => {
+    // Display current player ships
+    currentPlayer.ships.forEach((ship) => {
       if (cell.dataset.id === ship) {
         cell.classList.remove(`ship`);
       }
     });
-    inactivePlayer.shots.forEach((shot) => {
-      if (cell.dataset.id === shot) {
-        cell.classList.remove(`shot`);
-      }
-    });
-    inactivePlayer.hits.forEach((hit) => {
-      if (cell.dataset.id === hit) {
-        cell.classList.remove(`hit`);
-      }
-    });
-  });
 
-  //display current player ships, shots, and hits
-  cells.forEach((cell) => {
-    currentPlayer.ships.forEach((ship) => {
-      if (cell.dataset.id === ship) {
-        cell.classList.add(`ship`);
-      }
-    });
+    // Display current player shots
     currentPlayer.shots.forEach((shot) => {
       if (cell.dataset.id === shot) {
         cell.classList.add(`shot`);
       }
     });
+
+    // Display current player shots
     currentPlayer.hits.forEach((hit) => {
+      if (cell.dataset.id === hit) {
+        cell.classList.add(`hit`);
+      }
+    });
+  });
+
+  // Hide Inactive Player Items
+  inactivePlayer.board.classList.remove("active");
+  inactivePlayer.cells.forEach((cell) => {
+    // Display current player ships
+    inactivePlayer.ships.forEach((ship) => {
+      if (cell.dataset.id === ship) {
+        cell.classList.remove(`ship`);
+      }
+    });
+
+    // Display current player shots
+    inactivePlayer.shots.forEach((shot) => {
+      if (cell.dataset.id === shot) {
+        cell.classList.add(`shot`);
+      }
+    });
+
+    // Display current player shots
+    inactivePlayer.hits.forEach((hit) => {
       if (cell.dataset.id === hit) {
         cell.classList.add(`hit`);
       }
@@ -194,17 +217,17 @@ function setPlayerBoard() {
   });
 }
 
-function displayTurnsMessage(currentPlayer) {
-  message = `Player ${currentPlayer.id}, Click on the grid to place your shot. (Don't worry about hitting your own ship)`;
-  messageText.textContent = message;
-}
-
 function startTurns() {
   console.log("startTurns");
-  let [currentPlayer, inactivePlayer] = getCurrentPlayer(turn);
+  [currentPlayer, inactivePlayer] = getCurrentPlayer(turn);
   console.log(`current player: ${currentPlayer.id}`);
-  displayTurnsMessage(currentPlayer);
-  setPlayerBoard(currentPlayer, inactivePlayer);
+  displayTurnsMessage(currentPlayer, inactivePlayer);
+  setCurrentBoard(currentPlayer, inactivePlayer);
   console.log(`player one ships: ${PLAYER_1.ships}`);
   console.log(`player two ships: ${PLAYER_2.ships}`);
+}
+
+function displayTurnsMessage(currentPlayer, inactivePlayer) {
+  currentPlayer.message.textContent = `Player ${currentPlayer.id}, Click on the grid to place your shot`;
+  inactivePlayer.message.textContent = "";
 }
