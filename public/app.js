@@ -75,23 +75,65 @@ restartBtn.addEventListener("click", startGame, { once: true });
 
 // Start game
 function startGame() {
+  console.log("startGame");
   turn = true;
   gameMessage.classList.remove("show");
-  [currentPlayer, inactivePlayer] = getCurrentPlayer(turn);
-  displayReadyMessage();
-  setPlayerBoard();
-  placeShipsTurn();
+  cells.forEach((cell) => {
+    cell.classList.remove("ship");
+    cell.classList.remove("shot");
+    cell.classList.remove("hit");
+  });
+  const [currentPlayer, inactivePlayer] = getCurrentPlayer(turn);
+  const [currentGrid, inactiveGrid] = getCurrentGrid(turn);
+  const [currentReadyBtn, inactiveReadyBtn] = getCurrentReadyBtn(turn);
+  const [currentBoard, inactiveBoard] = getCurrentBoard(turn);
+  displayReadyMessage(currentPlayer);
+  setCurrentBoard(currentPlayer, inactivePlayer, currentBoard, inactiveBoard);
+  currentGrid.addEventListener("click", placeShipMark);
 }
+
+// function playerOneReady() {
+//   pl1ReadyBtn.removeEventListener("click", playerOneReady);
+//   pl1Grid.removeEventListener("click", placeShipMark);
+//   pl2Grid;
+//   swapTurns();
+// }
 
 // Get the current player
 function getCurrentPlayer(turn) {
+  console.log("getCurrentPlayer");
   currentPlayer = turn ? PLAYER_1 : PLAYER_2;
   inactivePlayer = turn ? PLAYER_2 : PLAYER_1;
   return [currentPlayer, inactivePlayer];
 }
 
+// Get the current board
+function getCurrentBoard(turn) {
+  console.log("getCurrentBoard");
+  currentBoard = turn ? pl1Board : pl2Board;
+  inactiveBoard = turn ? pl2Board : pl1Board;
+  return [currentBoard, inactiveBoard];
+}
+
+// Get the current grid
+function getCurrentGrid(turn) {
+  console.log("getCurrentGrid");
+  currentGrid = turn ? pl1Grid : pl2Grid;
+  inactiveGrid = turn ? pl2Grid : pl1Grid;
+  return [currentGrid, inactiveGrid];
+}
+
+// Get the current ready button
+function getCurrentReadyBtn(turn) {
+  console.log("getCurrentReadyBtn");
+  currentReadyByn = turn ? pl1ReadyBtn : pl2ReadyBtn;
+  inactiveReadyBtn = turn ? pl2ReadyBtn : pl1ReadyBtn;
+  return [currentReadyByn, inactiveReadyBtn];
+}
+
 // Display ready message
-function displayReadyMessage() {
+function displayReadyMessage(currentPlayer) {
+  console.log("displayReadyMessage");
   message = `Player ${currentPlayer.id}, Click on the grid to place your ship. click 'Ready' when done`;
   if (currentPlayer.id == 1) {
     pl1Message.textContent = message;
@@ -103,57 +145,56 @@ function displayReadyMessage() {
 }
 
 // Turns to place player ships
-function placeShipsTurn() {
-  console.log(`current player: ${currentPlayer.id}`);
-  if (currentPlayer.id == 1) {
-    pl2Grid.removeEventListener("click", placeShipMark);
-    pl1Grid.addEventListener("click", placeShipMark);
-    pl1ReadyBtn.addEventListener("click", playerReady, { once: true });
-  } else {
-    pl1Grid.removeEventListener("click", placeShipMark);
-    pl2Grid.addEventListener("click", placeShipMark);
-    pl2ReadyBtn.addEventListener("click", playerReady, { once: true });
-  }
-
-  // if (PLAYER_1.ready && PLAYER_2.ready) {
-  //   grids.forEach((grid) => {
-  //     grid.removeEventListener("click", placeShipMark);
-  //   });
-  //   pl1ReadyBtn.classList.toggle("show");
-  //   pl2ReadyBtn.classList.toggle("show");
-  //   startTurns();
-  // }
+function placeShipsTurn(e) {
+  console.log(`placeShipsTurn: ${currentPlayer.id}`);
+  [currentPlayer, inactivePlayer] = getCurrentPlayer(turn);
+  [currentGrid, inactiveGrid] = getCurrentGrid(turn);
+  [currentReadyBtn, inactiveReadyBtn] = getCurrentReadyBtn(turn);
+  [currentBoard, inactiveBoard] = getCurrentBoard(turn);
+  cell = e.target;
+  placeShipMark(cell);
+  currentReadyBtn.addEventListener("click", function () {
+    playerReady;
+  });
 }
 
 // Place individual marks for the ships
-function placeShipMark(e) {
-  cell = e.target;
+function placeShipMark(cell) {
+  console.log(`placeShipMark ${currentPlayer.id}`);
   cell.classList.add("ship");
   currentPlayer.ships.push(cell.dataset.id);
 }
 
 // Set Player ready to True, and switch current player
 function playerReady() {
+  console.log("playerReady");
   currentPlayer.ready = true;
   swapTurns();
-  [currentPlayer, inactivePlayer] = getCurrentPlayer(turn);
-  setPlayerBoard();
-  displayReadyMessage();
+  getCurrentPlayer(turn);
 }
 
 function swapTurns() {
+  console.log("swapTurns");
   turn = !turn;
 }
 // Set the grid hover color for current player
-function setPlayerBoard() {
+function setCurrentBoard(
+  currentPlayer,
+  inactivePlayer,
+  currentBoard,
+  inactiveBoard
+) {
+  console.log("setPlayerBoard");
   // Highlight current player board
-  if (currentPlayer.id == 1) {
-    pl1Board.classList.add("active");
-    pl2Board.classList.remove("active");
-  } else {
-    pl2Board.classList.add("active");
-    pl1Board.classList.remove("active");
-  }
+  currentBoard.classList.add("active");
+  inactiveBoard.classList.remove("active");
+  // if (currentPlayer.id == 1) {
+  //   pl1Board.classList.add("active");
+  //   pl2Board.classList.remove("active");
+  // } else {
+  //   pl2Board.classList.add("active");
+  //   pl1Board.classList.remove("active");
+  // }
 
   // hide other players ships, shots, and hits
   cells.forEach((cell) => {
