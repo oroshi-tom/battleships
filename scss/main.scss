@@ -223,14 +223,15 @@ button {
 
     .message-text {
       position: absolute;
-      top: 30%;
+      top: 20%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 100%;
       padding: 0.5rem;
+      font-weight: 600;
     }
 
-    button {
+    .ready-btn {
       font-size: $text-md;
       padding: 1rem 0.5rem;
       background: white;
@@ -242,6 +243,11 @@ button {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      display: none;
+
+      &.show {
+        display: flex;
+      }
 
       &:hover {
         background: black;
