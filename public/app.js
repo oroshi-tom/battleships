@@ -101,20 +101,18 @@ const PLAYER_2 = new Player(
 // Set inital states for game
 let turn;
 gameMessage.classList.add("show");
-restartBtn.addEventListener("click", startGame, { once: true });
+restartBtn.addEventListener("click", startGame);
 
 // Start game
 function startGame() {
   console.log("startGame");
   turn = true;
-  gameMessage.classList.remove("show");
-
   cells.forEach((cell) => {
     cell.classList.remove("ship");
     cell.classList.remove("hit");
     cell.classList.remove("miss");
   });
-
+  gameMessage.classList.remove("show");
   placeShips();
 }
 
@@ -128,6 +126,7 @@ function placeShips() {
     startTurns();
   } else {
     currentPlayer.grid.addEventListener("click", placeShipMark);
+    currentPlayer.grid.addEventListener("touch", placeShipMark);
   }
 }
 
@@ -204,16 +203,17 @@ function displayReadyMessage(currentPlayer, inactivePlayer) {
 
 // Place individual marks for the ships
 function placeShipMark(e) {
+  e.preventDefault();
   console.log(`placeShipMark ${currentPlayer.id}`);
   const cell = e.target;
   cell.classList.add("ship");
   currentPlayer.ships.push(cell.dataset.id);
-  currentPlayer.readyBtn.addEventListener("click", playerReady, {
-    once: true,
-  });
+  currentPlayer.readyBtn.addEventListener("click", playerReady, { once: true });
+  currentPlayer.readyBtn.addEventListener("touch", playerReady, { once: true });
 }
 
-function playerReady() {
+function playerReady(e) {
+  e.preventDefault();
   console.log("playerReady");
   currentPlayer.ready = true;
   currentPlayer.grid.removeEventListener("click", placeShipMark);
@@ -236,6 +236,7 @@ function startTurns() {
   console.log(`player one ships: ${PLAYER_1.ships}`);
   console.log(`player two ships: ${PLAYER_2.ships}`);
   currentPlayer.grid.addEventListener("click", placeShot, { once: true });
+  currentPlayer.grid.addEventListener("touch", placeShot, { once: true });
 }
 
 function displayTurnsMessage(currentPlayer, inactivePlayer) {
@@ -244,21 +245,14 @@ function displayTurnsMessage(currentPlayer, inactivePlayer) {
 }
 
 function placeShot(e) {
+  e.preventDefault();
   cell = e.target;
   currentPlayer.shots.push(cell.dataset.id);
   if (inactivePlayer.ships.includes(cell.dataset.id)) {
     currentPlayer.cells[cell.dataset.id].classList.add("hit");
     inactivePlayer.cells[cell.dataset.id].classList.add("hit");
     if (checkWin()) {
-      console.log(`Player ${currentPlayer.id} Wins!`);
-      // set the winning message
-
-      // Display the winning screen
-      message = `Congrats Player ${currentPlayer.id}, You sunk my battleship!`;
-      gameMessageText.textContent = message;
-      gameMessage.classList.add("show");
-
-      restartBtn.addEventListener("click", startGame, { once: true });
+      resetGame();
     }
   } else {
     console.log("miss");
@@ -272,4 +266,11 @@ function checkWin() {
   return inactivePlayer.ships.every((ship) =>
     currentPlayer.shots.includes(ship)
   );
+}
+
+function resetGame() {
+  message = `Congrats Player ${currentPlayer.id}, You sunk my battleship!`;
+  gameMessageText.textContent = message;
+  gameMessage.classList.add("show");
+  restartBtn.addEventListener("click", startGame, { once: true });
 }
