@@ -215,7 +215,6 @@ function startTurns() {
   [currentPlayer, inactivePlayer] = getCurrentPlayer(turn);
   displayTurnsMessage(currentPlayer, inactivePlayer);
   setCurrentBoard(currentPlayer, inactivePlayer);
-
   currentPlayer.grid.addEventListener("click", placeShot, { once: true });
   currentPlayer.grid.addEventListener("touch", placeShot, { once: true });
 }
