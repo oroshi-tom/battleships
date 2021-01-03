@@ -17,9 +17,9 @@ class Player {
     this.readyBtn = readyBtn;
   }
   ready = false;
-  hits = [];
   ships = [];
-  shots = [];
+  hits = [];
+  misses = [];
 }
 
 // Global Game constants
@@ -68,7 +68,7 @@ function buildGameBoard() {
 // Build the Game Board
 buildGameBoard();
 
-// Player-specific elements
+// Player-specific DOM elements
 const pl1Board = document.querySelector('.board[data-pl="1"]');
 const pl2Board = document.querySelector('.board[data-pl="2"]');
 const pl1Grid = document.querySelector('.grid[data-pl="1"]');
@@ -80,7 +80,7 @@ const pl2Message = document.querySelector('.message-text[data-pl="2"]');
 const pl1ReadyBtn = document.querySelector('.ready-btn[data-pl="1"]');
 const pl2ReadyBtn = document.querySelector('.ready-btn[data-pl="2"]');
 
-// Instantiate players
+// Player instances
 const PLAYER_1 = new Player(
   1,
   pl1Board,
@@ -105,21 +105,16 @@ restartBtn.addEventListener("click", startGame);
 
 // Start game
 function startGame() {
-  console.log("startGame");
   turn = true;
-  cells.forEach((cell) => {
-    cell.classList.remove("ship");
-    cell.classList.remove("hit");
-    cell.classList.remove("miss");
-  });
   gameMessage.classList.remove("show");
+  pl1ReadyBtn.classList.add("show");
+  pl2ReadyBtn.classList.add("show");
   placeShips();
 }
 
 // Place Player Ships on Grid
 function placeShips() {
-  console.log("placeShips");
-  const [currentPlayer, inactivePlayer] = getCurrentPlayer(turn);
+  [currentPlayer, inactivePlayer] = getCurrentPlayer(turn);
   setCurrentBoard(currentPlayer, inactivePlayer);
   displayReadyMessage(currentPlayer, inactivePlayer);
   if ((PLAYER_1.ready == true) & (PLAYER_2.ready == true)) {
@@ -132,7 +127,6 @@ function placeShips() {
 
 // Get the current player
 function getCurrentPlayer(turn) {
-  console.log("getCurrentPlayer");
   currentPlayer = turn ? PLAYER_1 : PLAYER_2;
   inactivePlayer = turn ? PLAYER_2 : PLAYER_1;
   return [currentPlayer, inactivePlayer];
@@ -140,8 +134,6 @@ function getCurrentPlayer(turn) {
 
 // Display Current Player Items, Hide Inactive Player Items
 function setCurrentBoard(currentPlayer, inactivePlayer) {
-  console.log("setPlayerBoard");
-
   // Highlight Current Player's Board
   currentPlayer.board.classList.add("active");
   currentPlayer.cells.forEach((cell) => {
@@ -152,10 +144,10 @@ function setCurrentBoard(currentPlayer, inactivePlayer) {
       }
     });
 
-    // Display Current Player's Shots
-    currentPlayer.shots.forEach((shot) => {
-      if (cell.dataset.id === shot) {
-        cell.classList.add(`shot`);
+    // Display Current Player's Misses
+    currentPlayer.misses.forEach((miss) => {
+      if (cell.dataset.id === miss) {
+        cell.classList.add(`miss`);
       }
     });
 
@@ -177,26 +169,13 @@ function setCurrentBoard(currentPlayer, inactivePlayer) {
       }
     });
 
-    // Hide Inactive Player's Shots
-    inactivePlayer.shots.forEach((shot) => {
-      if (cell.dataset.id === shot) {
-        cell.classList.add(`shot`);
-      }
-    });
-
-    // Hide Inactive Player's Hits
-    inactivePlayer.hits.forEach((hit) => {
-      if (cell.dataset.id === hit) {
-        cell.classList.add(`hit`);
-      }
-    });
+    // Removed hiding inactive player hits & misses
   });
 }
 
 // Display ready message
 function displayReadyMessage(currentPlayer, inactivePlayer) {
-  console.log("displayReadyMessage");
-  const messageText = `Player ${currentPlayer.id}, Click on the grid to place your ship. click 'Ready' when done`;
+  const messageText = `Player ${currentPlayer.id}, Click on grid cells to place your ship(s). click 'Ready' when done`;
   currentPlayer.message.textContent = messageText;
   inactivePlayer.message.textContent = "";
 }
@@ -204,37 +183,38 @@ function displayReadyMessage(currentPlayer, inactivePlayer) {
 // Place individual marks for the ships
 function placeShipMark(e) {
   e.preventDefault();
-  console.log(`placeShipMark ${currentPlayer.id}`);
   const cell = e.target;
   cell.classList.add("ship");
   currentPlayer.ships.push(cell.dataset.id);
   currentPlayer.readyBtn.addEventListener("click", playerReady, { once: true });
   currentPlayer.readyBtn.addEventListener("touch", playerReady, { once: true });
+  if ((PLAYER_1.ready == true) & (PLAYER_2.ready == true)) {
+    startTurns();
+  }
 }
 
 function playerReady(e) {
   e.preventDefault();
-  console.log("playerReady");
   currentPlayer.ready = true;
   currentPlayer.grid.removeEventListener("click", placeShipMark);
+  currentPlayer.grid.removeEventListener("touch", placeShipMark);
+  if (currentPlayer.id == 1) {
+    pl1ReadyBtn.classList.remove("show");
+  } else {
+    pl2ReadyBtn.classList.remove("show");
+  }
   swapTurns();
-  setCurrentBoard(currentPlayer, inactivePlayer);
   placeShips();
 }
 
 function swapTurns() {
-  console.log("swapTurns");
   turn = !turn;
 }
 
 function startTurns() {
-  console.log("startTurns");
   [currentPlayer, inactivePlayer] = getCurrentPlayer(turn);
-  console.log(`current player: ${currentPlayer.id}`);
   displayTurnsMessage(currentPlayer, inactivePlayer);
   setCurrentBoard(currentPlayer, inactivePlayer);
-  console.log(`player one ships: ${PLAYER_1.ships}`);
-  console.log(`player two ships: ${PLAYER_2.ships}`);
   currentPlayer.grid.addEventListener("click", placeShot, { once: true });
   currentPlayer.grid.addEventListener("touch", placeShot, { once: true });
 }
@@ -247,24 +227,26 @@ function displayTurnsMessage(currentPlayer, inactivePlayer) {
 function placeShot(e) {
   e.preventDefault();
   cell = e.target;
-  currentPlayer.shots.push(cell.dataset.id);
   if (inactivePlayer.ships.includes(cell.dataset.id)) {
+    currentPlayer.hits.push(cell.dataset.id);
     currentPlayer.cells[cell.dataset.id].classList.add("hit");
     inactivePlayer.cells[cell.dataset.id].classList.add("hit");
-    if (checkWin()) {
-      resetGame();
-    }
   } else {
-    console.log("miss");
     currentPlayer.cells[cell.dataset.id].classList.add("miss");
+    currentPlayer.misses.push(cell.dataset.id);
   }
-  swapTurns();
-  startTurns();
+
+  if (checkWin()) {
+    resetGame();
+  } else {
+    swapTurns();
+    startTurns();
+  }
 }
 
 function checkWin() {
   return inactivePlayer.ships.every((ship) =>
-    currentPlayer.shots.includes(ship)
+    currentPlayer.hits.includes(ship)
   );
 }
 
@@ -272,5 +254,29 @@ function resetGame() {
   message = `Congrats Player ${currentPlayer.id}, You sunk my battleship!`;
   gameMessageText.textContent = message;
   gameMessage.classList.add("show");
-  restartBtn.addEventListener("click", startGame, { once: true });
+
+  resetPlayers();
+
+  grids.forEach((grid) => {
+    grid.removeEventListener("click", placeShot);
+    grid.removeEventListener("touch", placeShot);
+  });
+
+  cells.forEach((cell) => {
+    cell.classList.remove("ship");
+    cell.classList.remove("miss");
+    cell.classList.remove("hit");
+  });
+}
+
+function resetPlayers() {
+  PLAYER_1.ships = [];
+  PLAYER_2.ships = [];
+  PLAYER_1.misses = [];
+  PLAYER_2.misses = [];
+  PLAYER_1.hits = [];
+  PLAYER_2.hits = [];
+
+  PLAYER_1.ready = false;
+  PLAYER_2.ready = false;
 }
